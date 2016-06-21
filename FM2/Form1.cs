@@ -9,23 +9,22 @@ namespace FM2
 {
     public partial class fmPlayerEvalForm : Form
     {
+        // set up form variables
         OpenFileDialog ofd = new OpenFileDialog();
         Fm2ModelContainer context = new Fm2ModelContainer();
 
         public fmPlayerEvalForm()
         {
             InitializeComponent();
+
             try
             {
+                // get initial players
                 var playerQuery = from d in context.Players
                                   orderby d.Id
                                   select d;
-
-                //MessageBox.Show(playerQuery);
-                //this.departmentList.DisplayMember = "Name";
+                // set data grid
                 playerGrid.DataSource = playerQuery.ToList();
-                //playersDataSet.Lo
-                //schoolContext.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -34,8 +33,6 @@ namespace FM2
         }
         public void readCsv(string fileName)
         {
-            //DataTable dt = new DataTable();
-
             using (OleDbConnection cn = new OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=\"" + Path.GetDirectoryName(fileName) + "\";Extended Properties='text;HDR=yes;FMT=Delimited(,)';"))
             {
                 using (OleDbCommand cmd = new OleDbCommand(string.Format("select * from [{0}]", new FileInfo(fileName).Name), cn))
@@ -43,8 +40,6 @@ namespace FM2
                     cn.Open();
                     using (OleDbDataAdapter adapter = new OleDbDataAdapter(cmd))
                     {
-                        //adapter.Fill(dt);
-
                         var allLines = File.ReadAllLines(fileName);
                         var query = from line in allLines
                                     let data = line.Split(',')
@@ -54,27 +49,16 @@ namespace FM2
                                         Aggression = Int16.Parse(data[1]),
                                         WorkRate = Int16.Parse(data[2])
                                     };
-                        //int Count = 0;
-                        
 
                         foreach (var s in query)
                         {
-                            //Count++;
                             Player newPlayer = new Player();
                             newPlayer.PlayerName = s.PlayerName;
                             newPlayer.Aggression = s.Aggression;
                             newPlayer.WorkRate = s.WorkRate;
-                            //using ()
-                            //{
-                                context.Players.Add(newPlayer);
-                                context.SaveChanges();
-                            //}
-                            //players.Add(newPlayer);
-                            
-                            Console.Write(s.PlayerName);
+                            context.Players.Add(newPlayer);
+                            context.SaveChanges();
                         }
-
-                        //Fm2ModelContainer  = new Fm2ModelContainer();
 
                         try
                         {
@@ -88,9 +72,6 @@ namespace FM2
                         {
                             MessageBox.Show(ex.Message);
                         }
-                        
-
-
                     }
                 }
             }
