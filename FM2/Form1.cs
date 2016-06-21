@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.OleDb;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace FM2
@@ -15,13 +10,31 @@ namespace FM2
     public partial class fmPlayerEvalForm : Form
     {
         OpenFileDialog ofd = new OpenFileDialog();
+        Fm2ModelContainer context = new Fm2ModelContainer();
+
         public fmPlayerEvalForm()
         {
             InitializeComponent();
+            try
+            {
+                var playerQuery = from d in context.Players
+                                  orderby d.Id
+                                  select d;
+
+                //MessageBox.Show(playerQuery);
+                //this.departmentList.DisplayMember = "Name";
+                playerGrid.DataSource = playerQuery.ToList();
+                //playersDataSet.Lo
+                //schoolContext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
         public void readCsv(string fileName)
         {
-            DataTable dt = new DataTable();
+            //DataTable dt = new DataTable();
 
             using (OleDbConnection cn = new OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=\"" + Path.GetDirectoryName(fileName) + "\";Extended Properties='text;HDR=yes;FMT=Delimited(,)';"))
             {
@@ -30,7 +43,7 @@ namespace FM2
                     cn.Open();
                     using (OleDbDataAdapter adapter = new OleDbDataAdapter(cmd))
                     {
-                        adapter.Fill(dt);
+                        //adapter.Fill(dt);
 
                         var allLines = File.ReadAllLines(fileName);
                         var query = from line in allLines
@@ -38,12 +51,11 @@ namespace FM2
                                     select new
                                     {
                                         PlayerName = data[0],
-                                        Aggression = Int32.Parse(data[1]),
-                                        WorkRate = Int32.Parse(data[2])
+                                        Aggression = Int16.Parse(data[1]),
+                                        WorkRate = Int16.Parse(data[2])
                                     };
                         //int Count = 0;
-
-                       /* List<Player> players = new List<Player>();
+                        
 
                         foreach (var s in query)
                         {
@@ -52,28 +64,31 @@ namespace FM2
                             newPlayer.PlayerName = s.PlayerName;
                             newPlayer.Aggression = s.Aggression;
                             newPlayer.WorkRate = s.WorkRate;
-                            players.Add(newPlayer);
+                            //using ()
+                            //{
+                                context.Players.Add(newPlayer);
+                                context.SaveChanges();
+                            //}
+                            //players.Add(newPlayer);
+                            
+                            Console.Write(s.PlayerName);
+                        }
 
-                        }*/
-
-                       /* playerContext = new fmEvalModel();
+                        //Fm2ModelContainer  = new Fm2ModelContainer();
 
                         try
                         {
-                            var playerQuery = from d in playerContext.Players
+                            var playerQuery = from d in context.Players
                                               orderby d.Id
                                               select d;
-
-                            //this.departmentList.DisplayMember = "Name";
-                            dataGridView.DataSource = ((ObjectQuery)playerQuery).Execute(MergeOption.AppendOnly);
-                            //playersDataSet.Lo
-                            //schoolContext.SaveChanges();
+                            
+                            playerGrid.DataSource = playerQuery.ToList();
                         }
                         catch (Exception ex)
                         {
                             MessageBox.Show(ex.Message);
                         }
-                        */
+                        
 
 
                     }
@@ -84,15 +99,10 @@ namespace FM2
         private void importCsvToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ofd.Filter = "CSV|*.csv";
-            // original before I found out about ofd.Filter
-            //string pattern = ".*\\.csv$";
-            //if (ofd.ShowDialog() == DialogResult.OK && Regex.IsMatch(ofd.FileName.Trim(), pattern, RegexOptions.IgnoreCase))
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-                //Console.Write(pattern);
-                //Console.Write(ofd);
                 toolStripFilePath.Text = ofd.FileName;
-                //dataGridView.DataSource = readCsv(ofd.FileName);
+                readCsv(ofd.FileName);
             }
             else
             {
@@ -101,5 +111,17 @@ namespace FM2
 
         }
 
+        private void clearData_Click(object sender, EventArgs e)
+        {
+            var allPlayers = context.Players.Where(p => p.Id > 0);
+            context.Players.RemoveRange(allPlayers);
+            context.SaveChanges();
+
+            var playerQuery = from d in context.Players
+                              orderby d.Id
+                              select d;
+
+            playerGrid.DataSource = playerQuery.ToList();
+        }
     }
 }

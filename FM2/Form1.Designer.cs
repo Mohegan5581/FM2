@@ -38,6 +38,7 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripFilePath = new System.Windows.Forms.ToolStripStatusLabel();
             this.playerGrid = new System.Windows.Forms.DataGridView();
+            this.clearData = new System.Windows.Forms.Button();
             this.mainMenuStrip.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.playerGrid)).BeginInit();
@@ -120,11 +121,22 @@
             this.playerGrid.Size = new System.Drawing.Size(535, 348);
             this.playerGrid.TabIndex = 2;
             // 
+            // clearData
+            // 
+            this.clearData.Location = new System.Drawing.Point(554, 36);
+            this.clearData.Name = "clearData";
+            this.clearData.Size = new System.Drawing.Size(75, 23);
+            this.clearData.TabIndex = 3;
+            this.clearData.Text = "Reset Data";
+            this.clearData.UseVisualStyleBackColor = true;
+            this.clearData.Click += new System.EventHandler(this.clearData_Click);
+            // 
             // fmPlayerEvalForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(875, 510);
+            this.Controls.Add(this.clearData);
             this.Controls.Add(this.playerGrid);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.mainMenuStrip);
@@ -153,6 +165,7 @@
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripFilePath;
         private System.Windows.Forms.DataGridView playerGrid;
+        private System.Windows.Forms.Button clearData;
     }
 }
 
