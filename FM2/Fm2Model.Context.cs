@@ -26,5 +26,10 @@ namespace FM2
         }
     
         public virtual DbSet<Player> Players { get; set; }
+        public virtual DbSet<Positions> Positions { get; set; }
+        public virtual DbSet<Weights> Weights { get; set; }
+        public virtual DbSet<Contract> Contracts { get; set; }
+        public virtual DbSet<PositionLookup> PositionLookups { get; set; }
+        public virtual DbSet<Tactic> Tactics { get; set; }
     }
 }

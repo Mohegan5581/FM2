@@ -7,6 +7,27 @@
     <Schema Namespace="Fm2Model.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2012" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
   <EntityContainer Name="Fm2ModelStoreContainer">
     <EntitySet Name="Players" EntityType="Fm2Model.Store.Players" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Positions" EntityType="Fm2Model.Store.Positions" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Weights" EntityType="Fm2Model.Store.Weights" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Contracts" EntityType="Fm2Model.Store.Contracts" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="PositionLookups" EntityType="Fm2Model.Store.PositionLookups" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Tactics" EntityType="Fm2Model.Store.Tactics" store:Type="Tables" Schema="dbo" />
+    <AssociationSet Name="PlayerPositions" Association="Fm2Model.Store.PlayerPositions">
+      <End Role="Player" EntitySet="Players" />
+      <End Role="Positions" EntitySet="Positions" />
+    </AssociationSet>
+    <AssociationSet Name="PositionLookupPositions" Association="Fm2Model.Store.PositionLookupPositions">
+      <End Role="PositionLookup" EntitySet="PositionLookups" />
+      <End Role="Positions" EntitySet="Positions" />
+    </AssociationSet>
+    <AssociationSet Name="PlayerContract" Association="Fm2Model.Store.PlayerContract">
+      <End Role="Player" EntitySet="Players" />
+      <End Role="Contract" EntitySet="Contracts" />
+    </AssociationSet>
+    <AssociationSet Name="TacticWeights" Association="Fm2Model.Store.TacticWeights">
+      <End Role="Tactic" EntitySet="Tactics" />
+      <End Role="Weights" EntitySet="Weights" />
+    </AssociationSet>
   </EntityContainer>
   <EntityType Name="Players">
     <Key>
@@ -17,12 +38,124 @@
     <Property Name="Aggression" Type="smallint" Nullable="false" />
     <Property Name="WorkRate" Type="smallint" Nullable="false" />
   </EntityType>
+  <EntityType Name="Positions">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="PlayerId" Type="int" Nullable="false" />
+    <Property Name="PositionLookupId" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Weights">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Attribute" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Weight" Type="decimal" Nullable="false" />
+    <Property Name="TacticId" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Contracts">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="PlayerId" Type="int" Nullable="false" />
+    <Property Name="StartDate" Type="datetime" Nullable="false" />
+    <Property Name="EndDate" Type="datetime" Nullable="false" />
+    <Property Name="PerWeek" Type="int" Nullable="false" />
+    <Property Name="PerWeekWithBonus" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="PositionLookups">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="PositionAbbr" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="PositionName" Type="nvarchar(max)" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Tactics">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="TacticName" Type="nvarchar(max)" Nullable="false" />
+  </EntityType>
+  <Association Name="PlayerPositions">
+    <End Role="Player" Type="Fm2Model.Store.Players" Multiplicity="1" />
+    <End Role="Positions" Type="Fm2Model.Store.Positions" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Player">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Positions">
+        <PropertyRef Name="PlayerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="PositionLookupPositions">
+    <End Role="PositionLookup" Type="Fm2Model.Store.PositionLookups" Multiplicity="1" />
+    <End Role="Positions" Type="Fm2Model.Store.Positions" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PositionLookup">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Positions">
+        <PropertyRef Name="PositionLookupId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="PlayerContract">
+    <End Role="Player" Type="Fm2Model.Store.Players" Multiplicity="1" />
+    <End Role="Contract" Type="Fm2Model.Store.Contracts" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Player">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Contract">
+        <PropertyRef Name="PlayerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="TacticWeights">
+    <End Role="Tactic" Type="Fm2Model.Store.Tactics" Multiplicity="1" />
+    <End Role="Weights" Type="Fm2Model.Store.Weights" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Tactic">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Weights">
+        <PropertyRef Name="TacticId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
 </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="Fm2Model" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" annotation:UseStrongSpatialTypes="false">
         <EntityContainer Name="Fm2ModelContainer" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Players" EntityType="Fm2Model.Player" />
+          <EntitySet Name="Positions" EntityType="Fm2Model.Positions" />
+          <EntitySet Name="Weights" EntityType="Fm2Model.Weights" />
+          <EntitySet Name="Contracts" EntityType="Fm2Model.Contract" />
+          <AssociationSet Name="PlayerPositions" Association="Fm2Model.PlayerPositions">
+            <End Role="Player" EntitySet="Players" />
+            <End Role="Positions" EntitySet="Positions" />
+          </AssociationSet>
+          <EntitySet Name="PositionLookups" EntityType="Fm2Model.PositionLookup" />
+          <AssociationSet Name="PositionLookupPositions" Association="Fm2Model.PositionLookupPositions">
+            <End Role="PositionLookup" EntitySet="PositionLookups" />
+            <End Role="Positions" EntitySet="Positions" />
+          </AssociationSet>
+          <AssociationSet Name="PlayerContract" Association="Fm2Model.PlayerContract">
+            <End Role="Player" EntitySet="Players" />
+            <End Role="Contract" EntitySet="Contracts" />
+          </AssociationSet>
+          <EntitySet Name="Tactics" EntityType="Fm2Model.Tactic" />
+          <AssociationSet Name="TacticWeights" Association="Fm2Model.TacticWeights">
+            <End Role="Tactic" EntitySet="Tactics" />
+            <End Role="Weights" EntitySet="Weights" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Player">
           <Key>
@@ -32,7 +165,105 @@
           <Property Name="PlayerName" Type="String" Nullable="false" />
           <Property Name="Aggression" Type="Int16" Nullable="false" />
           <Property Name="WorkRate" Type="Int16" Nullable="false" />
+          <NavigationProperty Name="Positions" Relationship="Fm2Model.PlayerPositions" FromRole="Player" ToRole="Positions" />
+          <NavigationProperty Name="Contracts" Relationship="Fm2Model.PlayerContract" FromRole="Player" ToRole="Contract" />
         </EntityType>
+        <EntityType Name="Positions">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="Player" Relationship="Fm2Model.PlayerPositions" FromRole="Positions" ToRole="Player" />
+          <Property Name="PlayerId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="PositionLookup" Relationship="Fm2Model.PositionLookupPositions" FromRole="Positions" ToRole="PositionLookup" />
+          <Property Name="PositionLookupId" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Weights">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Attribute" Type="String" Nullable="false" />
+          <Property Name="Weight" Type="Decimal" Nullable="false" />
+          <NavigationProperty Name="Tactic" Relationship="Fm2Model.TacticWeights" FromRole="Weights" ToRole="Tactic" />
+          <Property Name="TacticId" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Contract">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="Player" Relationship="Fm2Model.PlayerContract" FromRole="Contract" ToRole="Player" />
+          <Property Name="PlayerId" Type="Int32" Nullable="false" />
+          <Property Name="StartDate" Type="DateTime" Nullable="false" />
+          <Property Name="EndDate" Type="DateTime" Nullable="false" />
+          <Property Name="PerWeek" Type="Int32" Nullable="false" />
+          <Property Name="PerWeekWithBonus" Type="Int32" Nullable="false" />
+        </EntityType>
+        <Association Name="PlayerPositions">
+          <End Type="Fm2Model.Player" Role="Player" Multiplicity="1" />
+          <End Type="Fm2Model.Positions" Role="Positions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Player">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Positions">
+              <PropertyRef Name="PlayerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="PositionLookup">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PositionAbbr" Type="String" Nullable="false" />
+          <Property Name="PositionName" Type="String" Nullable="false" />
+        </EntityType>
+        <Association Name="PositionLookupPositions">
+          <End Type="Fm2Model.PositionLookup" Role="PositionLookup" Multiplicity="1" />
+          <End Type="Fm2Model.Positions" Role="Positions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PositionLookup">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Positions">
+              <PropertyRef Name="PositionLookupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PlayerContract">
+          <End Type="Fm2Model.Player" Role="Player" Multiplicity="1" />
+          <End Type="Fm2Model.Contract" Role="Contract" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Player">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Contract">
+              <PropertyRef Name="PlayerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Tactic">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TacticName" Type="String" Nullable="false" />
+          <NavigationProperty Name="Weights" Relationship="Fm2Model.TacticWeights" FromRole="Tactic" ToRole="Weights" />
+        </EntityType>
+        <Association Name="TacticWeights">
+          <End Type="Fm2Model.Tactic" Role="Tactic" Multiplicity="1" />
+          <End Type="Fm2Model.Weights" Role="Weights" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tactic">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Weights">
+              <PropertyRef Name="TacticId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -46,6 +277,54 @@
           <ScalarProperty Name="PlayerName" ColumnName="PlayerName" />
           <ScalarProperty Name="Aggression" ColumnName="Aggression" />
           <ScalarProperty Name="WorkRate" ColumnName="WorkRate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Positions">
+      <EntityTypeMapping TypeName="IsTypeOf(Fm2Model.Positions)">
+        <MappingFragment StoreEntitySet="Positions">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="PlayerId" ColumnName="PlayerId" />
+          <ScalarProperty Name="PositionLookupId" ColumnName="PositionLookupId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Weights">
+      <EntityTypeMapping TypeName="IsTypeOf(Fm2Model.Weights)">
+        <MappingFragment StoreEntitySet="Weights">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Attribute" ColumnName="Attribute" />
+          <ScalarProperty Name="Weight" ColumnName="Weight" />
+          <ScalarProperty Name="TacticId" ColumnName="TacticId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Contracts">
+      <EntityTypeMapping TypeName="IsTypeOf(Fm2Model.Contract)">
+        <MappingFragment StoreEntitySet="Contracts">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="PlayerId" ColumnName="PlayerId" />
+          <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+          <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+          <ScalarProperty Name="PerWeek" ColumnName="PerWeek" />
+          <ScalarProperty Name="PerWeekWithBonus" ColumnName="PerWeekWithBonus" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="PositionLookups">
+      <EntityTypeMapping TypeName="IsTypeOf(Fm2Model.PositionLookup)">
+        <MappingFragment StoreEntitySet="PositionLookups">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="PositionAbbr" ColumnName="PositionAbbr" />
+          <ScalarProperty Name="PositionName" ColumnName="PositionName" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Tactics">
+      <EntityTypeMapping TypeName="IsTypeOf(Fm2Model.Tactic)">
+        <MappingFragment StoreEntitySet="Tactics">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="TacticName" ColumnName="TacticName" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

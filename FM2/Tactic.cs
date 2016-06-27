@@ -12,23 +12,18 @@ namespace FM2
     using System;
     using System.Collections.Generic;
     
-    public partial class Player
+    public partial class Tactic
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Player()
+        public Tactic()
         {
-            this.Positions = new HashSet<Positions>();
-            this.Contracts = new HashSet<Contract>();
+            this.Weights = new HashSet<Weights>();
         }
     
         public int Id { get; set; }
-        public string PlayerName { get; set; }
-        public short Aggression { get; set; }
-        public short WorkRate { get; set; }
+        public string TacticName { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Positions> Positions { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Contract> Contracts { get; set; }
+        public virtual ICollection<Weights> Weights { get; set; }
     }
 }
