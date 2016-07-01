@@ -25,6 +25,12 @@ namespace FM2
                                   select d;
                 // set data grid
                 playerGrid.DataSource = playerQuery.ToList();
+
+                var weightsQuery = from d in context.Weights
+                                  orderby d.Id
+                                  select d;
+                // set data grid
+                weightsGrid.DataSource = weightsQuery.ToList();
             }
             catch (Exception ex)
             {
@@ -103,6 +109,24 @@ namespace FM2
                               select d;
 
             playerGrid.DataSource = playerQuery.ToList();
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void clearWeightData_Click(object sender, EventArgs e)
+        {
+            var allWeights = context.Weights.Where(p => p.Id > 0);
+            context.Weights.RemoveRange(allWeights);
+            context.SaveChanges();
+
+            var weightsQuery = from d in context.Weights
+                              orderby d.Id
+                              select d;
+
+            weightsGrid.DataSource = weightsQuery.ToList();
         }
     }
 }
